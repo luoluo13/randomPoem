@@ -4,71 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>纳兰性德诗集</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .container {
-            text-align: center;
-            max-width: 800px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            background: #fff;
-            border-radius: 10px;
-        }
-
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .author {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .content {
-            font-size: 18px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            margin-bottom: 20px;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        button {
-            background: #008cba;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background: #005f73;
-        }
-
-        .hidden {
-            visibility: hidden;
-        }
-    </style>
+    <link rel="stylesheet" href="./css/default.css">
 </head>
 <body>
     <div class="container">
@@ -81,73 +17,6 @@
             <button id="next-btn">下一首</button>
         </div>
     </div>
-
-    <script>
-        let poems = []; // 用于存储加载的诗歌数据
-        let currentIndex = 0; // 当前展示的诗歌索引
-
-        // 从 纳兰性德.json 文件加载数据
-        fetch('./json/纳兰性德.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('无法加载诗歌数据！');
-                }
-                return response.json();
-            })
-            .then(data => {
-                poems = data; // 将 JSON 数据存储到变量中
-                if (poems.length > 0) {
-                    loadPoem(0); // 默认加载第一首诗歌
-                } else {
-                    showError('数据为空！');
-                }
-            })
-            .catch(error => {
-                showError(error.message);
-            });
-
-        // 显示错误消息
-        function showError(message) {
-            document.getElementById('poem-title').textContent = '出错了！';
-            document.getElementById('poem-author').textContent = '';
-            document.getElementById('poem-content').textContent = message;
-        }
-
-        // 载入诗歌到页面
-        function loadPoem(index) {
-            const poem = poems[index];
-            document.getElementById('poem-title').textContent = poem.title;
-            document.getElementById('poem-author').textContent = `作者: ${poem.author}`;
-            document.getElementById('poem-content').textContent = poem.para.join('\n');
-        }
-
-        // 随机选择诗歌
-        function showRandomPoem() {
-            const randomIndex = Math.floor(Math.random() * poems.length);
-            currentIndex = randomIndex;
-            loadPoem(currentIndex);
-        }
-
-        // 上一首诗
-        function showPreviousPoem() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                loadPoem(currentIndex);
-            }
-        }
-
-        // 下一首诗
-        function showNextPoem() {
-            if (currentIndex < poems.length - 1) {
-                currentIndex++;
-                loadPoem(currentIndex);
-            }
-        }
-
-        // 初始化按钮事件监听
-        document.getElementById('random-btn').addEventListener('click', showRandomPoem);
-        document.getElementById('prev-btn').addEventListener('click', showPreviousPoem);
-        document.getElementById('next-btn').addEventListener('click', showNextPoem);
-    </script>
+    <script src="./js/default.js"></script>
 </body>
 </html>
