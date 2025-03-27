@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON格式转换工具</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; }
+        .container { border: 1px solid #ccc; padding: 20px; border-radius: 5px; }
+        button { 
+            padding: 10px 20px; 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        button:hover { background: #45a049; }
+        #fileInput { margin: 20px 0; }
+        .note { color: #666; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>JSON批量转换工具</h2>
+        <input type="file" id="fileInput" multiple accept=".json" style="display: none">
+        <button onclick="document.getElementById('fileInput').click()">选择JSON文件</button>
+        <button onclick="convertFiles()">开始转换</button>
+        <div id="status" class="note">请先选择要转换的.json文件（可多选）</div>
+
+        <script>
+            let selectedFiles = [];
+
+            // 文件选择处理
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                selectedFiles = Array.from(e.target.files);
+                document.getElementById('status').textContent = 
+                    `已选择 ${selectedFiles.length} 个文件，点击开始转换`;
+            });
+
+            // 核心转换函数
+            function convertFiles() {
+                if (!selectedFiles.length) {
+                    alert('请先选择要转换的.json文件');
+                    return;
+                }
+
+                selectedFiles.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const jsonData = JSON.parse(e.target.result);
+                            const jsContent = `window._poemData = ${JSON.stringify(jsonData, null, 4)};`;
+                            
+                            // 创建下载链接
+                            const blob = new Blob([jsContent], { type: 'text/javascript' });
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.download = file.name.replace('.json', '.js');
+                            link.click();
+                            
+                        } catch (error) {
+                            console.error(`文件 ${file.name} 转换失败:`, error);
+                            alert(`文件 ${file.name} 格式错误，请检查JSON格式`);
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+
+                document.getElementById('status').textContent = 
+                    `转换完成！共转换 ${selectedFiles.length} 个文件，请将生成的.js文件放入json文件夹`;
+                selectedFiles = [];
+            }
+        </script>
+    </div>
+</body>
+</html>
