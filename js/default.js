@@ -1,24 +1,36 @@
 let poems = []; // 用于存储加载的诗歌数据
 let currentIndex = 0; // 当前展示的诗歌索引
 // 从 nalanxingde.json 文件加载数据
-fetch('./json/nalanxingde.json')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('无法加载诗歌数据！');
-        }
-        return response.json();
-    })
-    .then(data => {
-        poems = data; // 将 JSON 数据存储到变量中
-        if (poems.length > 0) {
-            loadPoem(0); // 默认加载第一首诗歌
-        } else {
-            showError('数据为空！');
-        }
-    })
-    .catch(error => {
-        showError(error.message);
-    });
+// 将原json文件改为js格式并添加全局变量
+
+// 替换为 ↓↓↓
+// 动态创建script标签加载数据
+const script = document.createElement('script');
+script.src = './json/nalanxingde.js';
+script.onload = () => {
+    poems = window._poemData; // 使用全局变量
+    if (poems.length > 0) loadPoem(0);
+};
+script.onerror = () => showError('数据加载失败！');
+document.head.appendChild(script);
+// fetch('./json/nalanxingde.json')
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error('无法加载诗歌数据！');
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         poems = data; // 将 JSON 数据存储到变量中
+//         if (poems.length > 0) {
+//             loadPoem(0); // 默认加载第一首诗歌
+//         } else {
+//             showError('数据为空！');
+//         }
+//     })
+//     .catch(error => {
+//         showError(error.message);
+//     });
 // 显示错误消息
 function showError(message) {
     document.getElementById('poem-title').textContent = '出错了！';
