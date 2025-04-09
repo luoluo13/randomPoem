@@ -1,22 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>纳兰性德诗集</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>清诗雅集 - 纳兰性德</title>
+    <!-- 新增字体和图标库 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/default.css">
 </head>
 <body>
-    <div class="container">
-        <div class="title" id="poem-title">加载中...</div>
-        <div class="author" id="poem-author"></div>
-        <div class="content" id="poem-content"></div>
-        <div class="buttons">
-            <button id="prev-btn">上一首</button>
-            <button id="random-btn">随机</button>
-            <button id="next-btn">下一首</button>
+    <!-- 新增菜单按钮 -->
+    <button class="menu-toggle circle-btn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- 修改后的侧边导航菜单 -->
+    <nav class="main-nav">
+        <div class="nav-brand">
+            <i class="fas fa-book-open"></i>
         </div>
-    </div>
+        
+        <!-- 新增功能菜单 -->
+        <ul class="poet-list">
+            <li class="poet-item" id="all-poets">全部随机</li>
+            <li class="poet-item poet-parent">
+                <span>自选诗人 <i class="fas fa-angle-right"></i></span>
+                <ul class="sub-poet-list"></ul>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 诗歌容器保持原有结构 -->
+    <main class="poem-container">
+        <div class="poem-card">
+            <div class="title-bar">
+                <div class="poem-title" id="poem-title">加载中...</div>
+                <div class="poem-author" id="poem-author"></div>
+            </div>
+            <div class="poem-content" id="poem-content"></div>
+        </div>
+
+        <!-- 按钮组增加图标 -->
+        <div class="control-buttons">
+            <button id="prev-btn" class="circle-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button id="random-btn" class="circle-btn primary-btn">
+                <i class="fas fa-random"></i>
+            </button>
+            <button id="next-btn" class="circle-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </main>
+
     <script src="./js/default.js"></script>
+    <script>
+        // 基础交互逻辑
+        document.querySelector('.menu-toggle').addEventListener('click', () => {
+            document.querySelector('.main-nav').classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
