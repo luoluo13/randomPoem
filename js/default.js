@@ -1,14 +1,3 @@
-let poems = []; // 用于存储加载的诗歌数据
-let currentIndex = 0; // 当前展示的诗歌索引
-
-// 动态创建script标签加载数据
-const script = document.createElement('script');
-script.onload = () => {
-    poems = window._poemData; // 使用全局变量
-    if (poems.length > 0) loadPoem(0);
-};
-script.onerror = () => showError('数据加载失败！');
-document.head.appendChild(script);
 // 显示错误消息
 function showError(message) {
     document.getElementById('poem-title').textContent = '出错了！';
@@ -22,58 +11,63 @@ function loadPoem(index) {
     document.getElementById('poem-author').textContent = `作者: ${poem.author}`;
     document.getElementById('poem-content').textContent = poem.para.join('\n');
 }
-// 修改为动态加载诗人JS列表
-const poetScript = document.createElement('script');
-poetScript.src = './poetjs/poet-list.js'; // 自动化生成的诗人列表
-poetScript.onload = () => {
-    // 自动加载第一个诗人的数据
-    const firstPoet = window._poetList[0];
-    loadPoetData(firstPoet.file);
-    
-    // 生成诗人子菜单
-    const subMenu = document.querySelector('.sub-poet-list');
-    // 在生成诗人子菜单的代码处添加样式控制
-    subMenu.innerHTML = window._poetList.map(poet => `
-        <li class="poet-item" data-file="${poet.file}" 
-            style="list-style-type: none;">${poet.name} <!-- 添加行内样式移除列表标记 -->
-        </li>
-    `).join('');
-    
-    // 或者更推荐的方式：在CSS文件中添加
-    // 请在你的CSS文件中添加以下规则：
-    // .sub-poet-list li { list-style: none; }
-    
-    // 添加诗人选择事件
-    subMenu.querySelectorAll('.poet-item').forEach(item => {
-        item.addEventListener('click', () => {
-            loadPoetData(item.dataset.file);
-        });
-    });
-};
-document.head.appendChild(poetScript);
 
 // 修改诗人数据加载函数
-function loadPoetData(filename) {
-    // 移除之前加载的诗人脚本
-    const existingScripts = document.head.querySelectorAll('script[src^="./poetjs/"]');
-    existingScripts.forEach(script => script.remove());
+async function loadPoetList() {
+    try {
+        const response = await fetch('http://localhost:3000/api/poets');
+        if (!response.ok) { // 新增HTTP状态检查
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const poets = await response.json();
+        
+        // 生成诗人子菜单
+        const subMenu = document.querySelector('.sub-poet-list');
+        subMenu.innerHTML = poets.map(poet => `
+            <li class="poet-item" data-file="${poet.file}">${poet.name}</li>
+        `).join('');
 
-    const script = document.createElement('script');
-    script.src = `./poetjs/${filename}`;
-    script.onload = () => {
-        poems = window._poemData;
-        // 在全部随机模式下加载新诗人后自动随机选诗
+        // 添加诗人选择事件
+        subMenu.querySelectorAll('.poet-item').forEach(item => {
+            item.addEventListener('click', async () => {
+                await loadPoetData(item.dataset.file);
+            });
+        });
+        
+        // 自动加载第一个诗人
+        if (poets.length > 0) {
+            await loadPoetData(poets[0].file);
+        }
+    } catch (error) {
+        showError(`加载失败: ${error.message}`);
+        console.error('Error loading poet list:', error);
+    }
+}
+
+// 修改后的诗人数据加载函数
+async function loadPoetData(filename) {
+    try {
+        const poetName = filename.replace('.json', '');
+        const response = await fetch(`http://localhost:3000/api/poems/${poetName}`);
+        poems = await response.json();
+        
         if (document.body.classList.contains('all-random')) {
             currentIndex = Math.floor(Math.random() * poems.length);
         } else {
             currentIndex = 0;
         }
         loadPoem(currentIndex);
-    };
-    script.onerror = () => showError('诗人数据加载失败');
-    document.head.appendChild(script);
+    } catch (error) {
+        showError('诗歌数据加载失败');
+    }
 }
 
+// 删除原 poetScript 相关代码，在初始化时加载
+document.addEventListener('DOMContentLoaded', () => {
+    loadPoetList(); // 替换原来的诗人列表加载
+    
+    // 保留原有事件监听...
+});
 // 修改随机函数支持跨诗人随机
 function showRandomPoem() {
     if (document.body.classList.contains('all-random')) {
@@ -124,4 +118,3 @@ document.addEventListener('DOMContentLoaded', () => {
         e.currentTarget.classList.toggle('active');
     });
 });
-
