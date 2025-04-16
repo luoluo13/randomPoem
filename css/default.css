@@ -191,6 +191,11 @@ body {
     border-radius: 8px;
     box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
     padding: 0.5rem 0;
+    list-style-type: none;
+}
+.sub-poet-list .poet-item {
+    padding: 8px 15px;
+    cursor: pointer;
 }
 
 .poet-parent.active .sub-poet-list {
