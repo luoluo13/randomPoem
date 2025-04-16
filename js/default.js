@@ -16,11 +16,14 @@ function loadPoem(index) {
 async function loadPoetList() {
     try {
         const response = await fetch('http://localhost:3000/api/poets');
-        if (!response.ok) { // 新增HTTP状态检查
+        if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const poets = await response.json();
         
+        // 新增全局诗人列表存储
+        window._poetList = poets;  // <-- 添加这行
+
         // 生成诗人子菜单
         const subMenu = document.querySelector('.sub-poet-list');
         subMenu.innerHTML = poets.map(poet => `
@@ -109,8 +112,7 @@ document.getElementById('next-btn').addEventListener('click', showNextPoem);
 document.addEventListener('DOMContentLoaded', () => {
     // 新增全部随机点击事件
     document.getElementById('all-poets').addEventListener('click', () => {
-        document.body.classList.add('all-random');
-        showRandomPoem();
+        document.body.classList.toggle('all-random'); // 仅切换模式状态
     });
 
     // 子菜单交互
