@@ -47,6 +47,10 @@
 ```bash
 npm install express cors
 node server.js
+
+或
+
+npm run start
 ```
 3. 访问应用
 ```plaintext
